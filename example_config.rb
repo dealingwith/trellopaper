@@ -1,0 +1,5 @@
+EXCLUDED_BOARDS = ["Foo"]
+FILE_PATH = "trello.taskpaper"
+TARGET_LISTS = ["Working", "Ready"]
+TRELLO_KEY = <YOUR API KEY>
+TRELLO_TOKEN = <YOUR TOKEN>
