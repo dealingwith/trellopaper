@@ -19,32 +19,30 @@ boards.each do |board|
       TARGET_LISTS.index(list.name)
     end
     board_title_included = false
-    if lists.any?
-      lists.each do |list|
-        indent = "  "
-        cards = list.cards
-        if cards.any?
-          if !board_title_included
-            content << "#{board.name}:\n  #{board.url}\n"
-            board_title_included = true
-          end
-          if TARGET_LISTS.length > 1
-            content << "#{indent}#{list.name}:\n" 
-            indent = "    "
-          end
-          cards.each do |card|
-            content << "#{indent}- #{card.name}\n"
-            content << "#{indent}  #{card.desc.lines[0]}\n" unless card.desc.empty?
-            card.attachments.each do |attachment|
-              if attachment.url && (!EXCLUDED_ATTACHMENTS.include? attachment.url[-4..-1])
-                content << "#{indent}  #{attachment.url}\n"
-              end
+    lists.each do |list|
+      indent = "  "
+      cards = list.cards
+      if cards.any?
+        if !board_title_included
+          content << "#{board.name}:\n  #{board.url}\n"
+          board_title_included = true
+        end
+        if TARGET_LISTS.length > 1
+          content << "#{indent}#{list.name}:\n" 
+          indent = "    "
+        end
+        cards.each do |card|
+          content << "#{indent}- #{card.name}\n"
+          content << "#{indent}  #{card.desc.lines[0]}\n" unless card.desc.empty?
+          card.attachments.each do |attachment|
+            if attachment.url && (!EXCLUDED_ATTACHMENTS.include? attachment.url[-4..-1])
+              content << "#{indent}  #{attachment.url}\n"
             end
-            card.checklists.each do |checklist|
-              list = Trello::Checklist.find checklist.id
-              list.items.each do |item|
-                content << "#{indent}  - #{item.name}\n" if item.state == "incomplete"
-              end
+          end
+          card.checklists.each do |checklist|
+            list = Trello::Checklist.find checklist.id
+            list.items.each do |item|
+              content << "#{indent}  - #{item.name}\n" if item.state == "incomplete"
             end
           end
         end
