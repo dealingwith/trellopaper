@@ -8,8 +8,12 @@ end
 
 user = Trello::Member.find("me")
 content = ""
-user.boards.each do |board|
-  if !board.closed?
+boards = user.boards.sort_by do |board|
+  PRIORITY_BOARDS.index(board.name) || PRIORITY_BOARDS.length
+end
+boards.each do |board|
+  if !board.closed? && (!EXCLUDED_BOARDS.include? board.name)
+    puts "Processing #{board.name}"
     lists = board.lists.find_all {|l| TARGET_LISTS.include? l.name }
     lists.sort_by! do |list|
       TARGET_LISTS.index(list.name)
@@ -19,7 +23,7 @@ user.boards.each do |board|
       lists.each do |list|
         indent = "  "
         cards = list.cards
-        if cards.any? && (!EXCLUDED_BOARDS.include? board.name)
+        if cards.any?
           if !board_title_included
             content << "#{board.name}:\n  #{board.url}\n"
             board_title_included = true
@@ -30,12 +34,12 @@ user.boards.each do |board|
           end
           cards.each do |card|
             content << "#{indent}- #{card.name}\n"
-            ## don't want this at the moment
-            # content << "   #{card.desc}\n" if !card.desc.empty?
-            ## this is not working when there are a lot of cards, I think it's an API call per card
-            # card.attachments.each do |attachment|
-            #   content << "   #{attachment.url}\n" if attachment.url
-            # end
+            content << "#{indent}  #{card.desc.lines[0]}\n" unless card.desc.empty?
+            card.attachments.each do |attachment|
+              if attachment.url && (!EXCLUDED_ATTACHMENTS.include? attachment.url[-4..-1])
+                content << "#{indent}  #{attachment.url}\n"
+              end
+            end
             card.checklists.each do |checklist|
               list = Trello::Checklist.find checklist.id
               list.items.each do |item|
@@ -48,5 +52,5 @@ user.boards.each do |board|
     end
   end
 end
-puts content
+# puts content
 File.write FILE_PATH, content

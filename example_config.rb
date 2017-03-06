@@ -1,4 +1,6 @@
 EXCLUDED_BOARDS = ["Foo"]
+EXCLUDED_ATTACHMENTS = [".jpg", ".png", ".pdf"] # currently must be a three-char extension
+PRIORITY_BOARDS = ["Bar", "Baz"]
 FILE_PATH = "trello.taskpaper"
 TARGET_LISTS = ["Working", "Ready"]
 TRELLO_KEY = <YOUR API KEY>
