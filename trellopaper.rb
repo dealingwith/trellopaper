@@ -12,7 +12,8 @@ boards = user.boards.sort_by do |board|
   PRIORITY_BOARDS.index(board.name) || PRIORITY_BOARDS.length
 end
 boards.each do |board|
-  if !board.closed? && (!EXCLUDED_BOARDS.include? board.name)
+  if !board.closed? && board.starred # (BOARDS.include? board.name)
+    # puts board.inspect;
     puts "Processing #{board.name}"
     lists = board.lists.find_all {|l| TARGET_LISTS.include? l.name }
     lists.sort_by! do |list|
@@ -33,12 +34,12 @@ boards.each do |board|
         end
         cards.each do |card|
           content << "#{indent}- #{card.name}\n"
-          content << "#{indent}  #{card.desc.lines[0]}\n" unless card.desc.empty?
-          card.attachments.each do |attachment|
-            if attachment.url && (!EXCLUDED_ATTACHMENTS.include? attachment.url[-4..-1])
-              content << "#{indent}  #{attachment.url}\n"
-            end
-          end
+          # content << "#{indent}  #{card.desc.lines[0]}\n" unless card.desc.empty?
+          # card.attachments.each do |attachment|
+          #   if attachment.url && (!EXCLUDED_ATTACHMENTS.include? attachment.url[-4..-1])
+          #     content << "#{indent}  #{attachment.url}\n"
+          #   end
+          # end
           card.checklists.each do |checklist|
             list = Trello::Checklist.find checklist.id
             list.items.each do |item|
