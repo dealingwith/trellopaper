@@ -7,12 +7,12 @@ Trello.configure do |config|
 end
 
 user = Trello::Member.find("me")
-content = ""
+content = "Trellopaper\nCaptured on " + Time.now.to_s.split(" ")[0] + "\n"
 boards = user.boards.sort_by do |board|
   PRIORITY_BOARDS.index(board.name) || PRIORITY_BOARDS.length
 end
 boards.each do |board|
-  if !board.closed? && board.starred # (BOARDS.include? board.name)
+  if !board.closed? && board.starred #(BOARDS.include? board.name)
     # puts board.inspect;
     puts "Processing #{board.name}"
     lists = board.lists.find_all {|l| TARGET_LISTS.include? l.name }
